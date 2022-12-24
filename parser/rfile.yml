@@ -1,0 +1,11 @@
+perf: |
+  set -eux
+  r clean
+  perf script > out.perf
+  ../../reader/FlameGraph/stackcollapse-perf.pl out.perf > out.folded
+  ../../reader/FlameGraph/flamegraph.pl out.folded > out.svg
+  python3 -m http.server
+
+clean: |
+  set -eux
+  rm -f perf.data.old out.svg out.folded out.perf

@@ -1,0 +1,30 @@
+all: |
+  # parallel
+  # dep: start
+  # dep: js
+  # dep: rs
+  # dep: sr
+  # dep: css
+
+js: |
+  # watch: find . -type f -name "*.jsx"
+  ./node_modules/.bin/esbuild static/script.jsx --jsx-factory=h --jsx-fragment=Fragment --bundle --outfile=static/script.dist.js --sourcemap
+  r sr --once
+
+ref: |
+  # watch: find . -type f -regex '.*\.\(html\|css\)' | grep -v node_modules
+  r sr --once
+
+css: |
+  npx tailwindcss --input static/style.css -o static/style.dist.css --watch
+
+start: |
+  flask --app server.py --debug run --host 0.0.0.0
+
+rs: |
+  python reload-server.py
+
+sr: |
+  # watch: find . -type f | grep -E 'static|templates' | grep -vE '\.jsx$|\.js$|\.js\.map$'
+  kill -s USR1 $(ps -ax | grep reload-server.py | grep python | awk '{print $1}')
+

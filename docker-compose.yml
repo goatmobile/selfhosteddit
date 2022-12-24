@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  pg:
+    build: ./docker
+    container_name: pg
+    shm_size: 1g
+    restart: always
+    environment:
+      - POSTGRES_USER=something
+      - POSTGRES_PASSWORD=changethis
+    network_mode: host
+    ports:
+      - '5432:5432'
+    command:
+      - -c
+      - 'config_file=/etc/postgresql/postgresql.conf'
+    volumes: 
+      - /data/reddit/pgdata:/var/lib/postgresql/data
+      - ./docker/postgresql.conf:/etc/postgresql/postgresql.conf

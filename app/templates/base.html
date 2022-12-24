@@ -1,0 +1,24 @@
+<!doctype html>
+
+<head>
+  <title>selfhosteddit</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.dist.css') }}">
+  <script src="{{ url_for('static', filename='script.dist.js') }}"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+
+  <head></head>
+
+<body>
+  <script>
+    const host = `${window.location.protocol}//${window.location.hostname}`;
+    const socketUrl = `ws://${window.location.hostname}:5678`;
+    const webSocket = new WebSocket(socketUrl);
+
+    webSocket.onmessage = () => {
+      window.location.reload();
+    };</script>
+</body>
+
+</html>

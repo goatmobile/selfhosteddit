@@ -1,0 +1,48 @@
+build-parser: |
+  # build parser executable
+  cd parser
+  mkdir -p build
+  cd build
+  cmake -GNinja ..
+  cmake --build . -- -v
+
+clean-parser: |
+  # remove parser build
+  cd parser
+  rm -rf build
+
+up: |
+  docker compose up -d
+
+stop: |
+  docker compose down
+
+reset: |
+  # clear 'reddit' database
+  set -eux
+  psql -h localhost -U $DB_USER -d reddit -c 'drop table if exists post'
+  echo "
+      CREATE TABLE post (
+        id VARCHAR(30) PRIMARY KEY,
+        author TEXT,
+        subreddit VARCHAR(300),
+        url TEXT,
+        title TEXT,
+        score INT,
+        created_utc INT,
+        num_comments INT,
+        ups INT,
+        downs INT,
+        over_18 BOOLEAN
+    )
+  " | psql -h localhost -U $DB_USER -d reddit
+  docker exec -it pg rm -f /tmp/parse.bad /tmp/dupe.bad
+
+mkindex: |
+  set -eux
+  psql -h localhost -U $DB_USER -d reddit -c "CREATE INDEX time_index ON post (created_utc)"
+  psql -h localhost -U $DB_USER -d reddit -c "CREATE INDEX subreddit_index ON post (subreddit)"
+  psql -h localhost -U $DB_USER -d reddit -c "CREATE INDEX subreddit_lower_index ON    post (lower(subreddit))"
+  psql -h localhost -U $DB_USER -d reddit -c "CREATE INDEX author_lower_index ON post (lower(author))"
+  psql -h localhost -U $DB_USER -d reddit -c "CREATE INDEX score_desc_index ON post (score desc)"
+  psql -h localhost -U $DB_USER -d reddit -c "CREATE INDEX sr_score_desc_index ON post (lower(subreddit), score desc)"

@@ -1,0 +1,9 @@
+OUTPUT = post                   # [<schema_name>.]table_name
+INPUT = stdin  # Input data location (absolute path)
+TYPE = CSV                            # Input file type
+QUOTE = "^"                          # Quoting character
+ESCAPE = \                            # Escape character for Quoting
+DELIMITER = "|"                       # Delimiter
+WRITER = PARALLEL
+DUPLICATE_ERRORS = INFINITE
+ON_DUPLICATE_KEEP = OLD
